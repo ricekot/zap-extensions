@@ -49,6 +49,7 @@ var addOns = listOf(
     "jsonview",
     "jython",
     "kotlin",
+    "nuclei",
     "oast",
     "onlineMenu",
     "openapi",
