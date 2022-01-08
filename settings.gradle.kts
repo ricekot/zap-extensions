@@ -10,6 +10,7 @@ var addOns = listOf(
     "alertFilters",
     "allinonenotes",
     "amf",
+    "api",
     "ascanrules",
     "ascanrulesAlpha",
     "ascanrulesBeta",

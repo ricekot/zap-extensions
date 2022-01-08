@@ -1,0 +1,46 @@
+syntax = "proto3";
+package org.zaproxy.addon.api;
+
+import "google/protobuf/empty.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "AlertApiProto";
+
+message Alert {
+    int32 sourceId = 1;
+    string other = 2;
+    string method = 3;
+    string evidence = 4;
+    int32 pluginId = 5;
+    int32 cweId = 6;
+    string confidence = 7;
+    int32 wascId = 8;
+    string description = 9;
+    int32 messageId = 10;
+    string url = 11;
+    map<string,string> tags = 12;
+    string reference = 13;
+    string solution = 14;
+    string name = 15;
+    string risk = 16;
+    int32 id = 17;
+    string alertRef = 18;
+    string param = 19;
+    string attack = 20;
+}
+
+message ViewAlertsRequest {
+    string baseurl = 1;
+    int32 count = 2;
+    string riskId = 3;
+    int32 start = 4;
+}
+
+message ViewAlertsResponse {
+    repeated Alert alerts = 1;
+}
+
+service AlertApi {
+    // Gets the alerts raised by ZAP, optionally filtering by URL or riskId, and paginating with 'start' position and 'count' of alerts
+    rpc ViewAlerts(ViewAlertsRequest) returns (ViewAlertsResponse) {}
+}
