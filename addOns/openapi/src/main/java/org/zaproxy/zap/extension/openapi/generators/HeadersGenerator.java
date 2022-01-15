@@ -99,12 +99,12 @@ public class HeadersGenerator {
         if (operation.getRequestBody() == null || operation.getRequestBody().getContent() == null) {
             return;
         }
-
-        for (String type : operation.getRequestBody().getContent().keySet()) {
+        Set<String> acceptedContentTypes = operation.getRequestBody().getContent().keySet();
+        for (String type : acceptedContentTypes) {
             String typeLc = type.toLowerCase(Locale.ROOT);
             if (typeLc.contains("json") || typeLc.contains("x-www-form-urlencoded")) {
                 headers.add(new HttpHeaderField(HttpHeader.CONTENT_TYPE, type));
-                break;
+                return;
             }
             if (typeLc.contains("multipart")) {
                 String contentTypeValue = type;
@@ -112,8 +112,13 @@ public class HeadersGenerator {
                     contentTypeValue += "; boundary=" + requestBody.substring(2, 38);
                 }
                 headers.add(new HttpHeaderField(HttpHeader.CONTENT_TYPE, contentTypeValue));
-                break;
+                return;
             }
+        }
+        if (!acceptedContentTypes.isEmpty()) {
+            headers.add(
+                    new HttpHeaderField(
+                            HttpHeader.CONTENT_TYPE, acceptedContentTypes.iterator().next()));
         }
     }
 
