@@ -35,6 +35,8 @@ crowdin {
 }
 
 dependencies {
+    api("org.datanucleus:datanucleus-accessplatform-jdo-rdbms:5.2.11")
+    api("org.flywaydb:flyway-core:8.5.5")
     implementation("commons-io:commons-io:2.11.0")
     implementation("org.apache.commons:commons-csv:1.9.0")
     implementation("org.apache.commons:commons-collections4:4.4")

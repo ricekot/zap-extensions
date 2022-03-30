@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!DOCTYPE orm SYSTEM "file:/javax/jdo/orm.dtd">
+<orm>
+    <package name="org.zaproxy.addon.oast">
+        <class name="BoastEntity" table="BOAST">
+            <field name="id">
+                <column name="ID" length="50" jdbc-type="VARCHAR"/>
+            </field>
+            <field name="canary">
+                <column name="CANARY" length="50" jdbc-type="VARCHAR"/>
+            </field>
+            <field name="secret">
+                <column name="SECRET" length="50" jdbc-type="VARCHAR"/>
+            </field>
+            <field name="uri">
+                <column name="URI" length="50" jdbc-type="VARCHAR"/>
+            </field>
+        </class>
+
+        <class name="InteractshEntity" table="INTERACTSH">
+            <field name="correlationId">
+                <column name="CORRELATION_ID" length="20" jdbc-type="CHAR"/>
+            </field>
+            <field name="secretKey">
+                <column name="SECRET_KEY" jdbc-type="UUID"/>
+            </field>
+            <field name="serverUrl">
+                <column name="SERVER_URL" length="100" jdbc-type="VARCHAR"/>
+            </field>
+            <field name="encodedPrivateKey">
+                <column name="ENCODED_PRIVATE_KEY" length="500" jdbc-type="VARBINARY"/>
+            </field>
+            <field name="encodedPublicKey">
+                <column name="ENCODED_PUBLIC_KEY" length="500" jdbc-type="VARBINARY"/>
+            </field>
+        </class>
+    </package>
+</orm>

@@ -1,3 +1,6 @@
+import org.rm3l.datanucleus.gradle.DataNucleusApi
+import org.rm3l.datanucleus.gradle.extensions.enhance.EnhanceExtension
+
 description = "Allows you to exploit out-of-band vulnerabilities"
 
 zapAddOn {
@@ -10,6 +13,9 @@ zapAddOn {
 
         dependencies {
             addOns {
+                register("commonlib") {
+                    version.set(">= 1.9.0")
+                }
                 register("network") {
                     version.set(">= 0.1.0")
                 }
@@ -45,7 +51,15 @@ crowdin {
     }
 }
 
+datanucleus {
+    enhance(closureOf<EnhanceExtension> {
+        api(DataNucleusApi.JDO)
+        persistenceUnitName(zapAddOn.addOnId.get())
+    })
+}
+
 dependencies {
+    compileOnly(parent!!.childProjects["commonlib"]!!)
     compileOnly(parent!!.childProjects["graaljs"]!!)
     compileOnly(parent!!.childProjects["network"]!!)
 

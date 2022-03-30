@@ -18,6 +18,8 @@ import org.zaproxy.gradle.crowdin.CrowdinExtension
 plugins {
     eclipse
     jacoco
+    id("org.flywaydb.flyway") version "8.5.5"
+    id("org.rm3l.datanucleus-gradle-plugin") version "1.7.0" apply false
     id("org.zaproxy.add-on") version "0.8.0" apply false
     id("org.zaproxy.crowdin") version "0.2.1" apply false
 }
@@ -77,6 +79,8 @@ subprojects {
     apply(plugin = "eclipse")
     apply(plugin = "java-library")
     apply(plugin = "jacoco")
+    apply(plugin = "org.flywaydb.flyway")
+    apply(plugin = "org.rm3l.datanucleus-gradle-plugin")
     apply(plugin = "org.zaproxy.add-on")
     if (useCrowdin) {
         apply(plugin = "org.zaproxy.crowdin")
@@ -102,6 +106,12 @@ subprojects {
             sourceCompatibility = JavaVersion.VERSION_1_8
             targetCompatibility = JavaVersion.VERSION_1_8
         }
+    }
+
+    flyway {
+        url = "jdbc:hsqldb:file:$projectDir/src/test/db/hsql"
+        user = "sa"
+        password = ""
     }
 
     tasks.named<JacocoReport>("jacocoTestReport") {
