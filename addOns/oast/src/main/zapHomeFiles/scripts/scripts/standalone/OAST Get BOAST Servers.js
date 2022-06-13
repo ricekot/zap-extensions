@@ -1,7 +1,8 @@
 // This script lists the details of all registered BOAST Servers.
 
-var Control = Java.type("org.parosproxy.paros.control.Control")
-var extOast = Control.getSingleton().getExtensionLoader().getExtension("ExtensionOast")
+var control
+if (!control) control = Java.type("org.parosproxy.paros.control.Control").getSingleton()
+var extOast = control.getExtensionLoader().getExtension("ExtensionOast")
 var boast = extOast.getBoastService()
 var registeredServers = boast.getRegisteredServers()
 

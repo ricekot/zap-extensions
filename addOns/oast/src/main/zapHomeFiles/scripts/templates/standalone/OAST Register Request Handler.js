@@ -1,8 +1,9 @@
 // This script registers an OAST message handler.
 // Change it to do whatever you want to do :)
 
-var Control = Java.type("org.parosproxy.paros.control.Control")
-var extOast = Control.getSingleton().getExtensionLoader().getExtension("ExtensionOast")
+var control
+if (!control) control = Java.type("org.parosproxy.paros.control.Control").getSingleton()
+var extOast = control.getExtensionLoader().getExtension("ExtensionOast")
 var boast = extOast.getBoastService()
 var interactsh = extOast.getInteractshService()
 
