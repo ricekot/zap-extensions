@@ -25,6 +25,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import graphql.introspection.IntrospectionQueryBuilder;
 import graphql.introspection.IntrospectionResultToSchema;
 import graphql.language.Document;
+import graphql.schema.GraphQLSchema;
+import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.SchemaPrinter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -32,6 +34,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import graphql.schema.idl.UnExecutableSchemaGenerator;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.io.FileUtils;
@@ -154,11 +158,16 @@ public class GraphQlParser {
         }
     }
 
-    public void parse(String schema) {
+    public void parse(String sdl) {
+        GraphQLSchema schema = UnExecutableSchemaGenerator.makeUnExecutableSchema(new SchemaParser().parse(sdl));
+        var generator =
+                new GraphQlGenerator(
+                        extensionGraphQl.getValueGenerator(), schema, requestor, param);
         if (syncParse) {
             fingerprint();
+            detectCycles(schema, generator);
             if (param.getQueryGenEnabled()) {
-                generate(schema);
+                generate(generator);
             }
             return;
         }
@@ -167,8 +176,9 @@ public class GraphQlParser {
                     @Override
                     public void run() {
                         fingerprint();
+                        detectCycles(schema, generator);
                         if (param.getQueryGenEnabled()) {
-                            generate(schema);
+                            generate(generator);
                         }
                     }
                 };
@@ -181,11 +191,13 @@ public class GraphQlParser {
         fingerprinter.fingerprint();
     }
 
-    private void generate(String schema) {
+    private void detectCycles(GraphQLSchema schema, GraphQlGenerator generator) {
+        var circularRefDetector = new GraphQlCyclesDetector(schema, generator);
+        circularRefDetector.detectCycles();
+    }
+
+    private void generate(GraphQlGenerator generator) {
         try {
-            GraphQlGenerator generator =
-                    new GraphQlGenerator(
-                            extensionGraphQl.getValueGenerator(), schema, requestor, param);
             generator.checkServiceMethods();
             generator.generateAndSend();
         } catch (Exception e) {

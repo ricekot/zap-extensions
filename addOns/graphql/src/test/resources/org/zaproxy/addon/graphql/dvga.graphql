@@ -1,0 +1,14 @@
+type Query {
+  paste: PasteObject
+}
+
+type PasteObject {
+  id: Int
+  owner: OwnerObject
+}
+
+type OwnerObject {
+  id: ID!
+  name: String
+  paste: [PasteObject]
+}
