@@ -11,6 +11,12 @@ const Root = () => {
     { title: "Settings", link: "settings", iconSrc: "gear.svg" },
   ]
 
+  const [activeTab, setActiveTab] = useState(null);
+
+  const toggleActiveTab = (tab) => {
+    setActiveTab(activeTab == tab ? null : tab)
+  }
+
   return (
     <div className="flex">
       <div
@@ -22,8 +28,10 @@ const Root = () => {
             {TopMenuItems.map((item) => (
               <Link to={item.link}>
                 <li
-                  className="flex rounded-md p-2 cursor-pointer hover:bg-light-white items-center mt-2"
+                  className={`flex rounded-md p-2 cursor-pointer hover:bg-light-white items-center mt-2
+                            ${activeTab == item.link ? "bg-light-white" : ""}`}
                   title={item.title}
+                  onClick={() => toggleActiveTab(item.link)}
                 >
                   <img src={`./src/assets/${item.iconSrc}`} />
                 </li>
@@ -42,8 +50,10 @@ const Root = () => {
             {BottomMenuItems.map((item) => (
               <Link to={item.link}>
                 <li
-                  className="flex rounded-md p-2 cursor-pointer hover:bg-light-white items-center mt-2"
+                  className={`flex rounded-md p-2 cursor-pointer hover:bg-light-white items-center mt-2
+                            ${activeTab == item.link ? "bg-light-white" : ""}`}
                   title={item.title}
+                  onClick={() => toggleActiveTab(item.link)}
                 >
                   <img src={`./src/assets/${item.iconSrc}`} />
                 </li>
@@ -54,6 +64,7 @@ const Root = () => {
               <li
                 className="flex rounded-md p-2 items-center mt-2"
                 title="Zed Attack Proxy"
+                onClick={() => setActiveTab(null)}
               >
                 <img
                   src="./src/assets/zap.svg"
@@ -64,8 +75,8 @@ const Root = () => {
         </div>
 
       </div>
-      
-      <div className="flex-none w-1/5 bg-slate-300">
+
+      <div className={`flex-none bg-slate-300 w-96 ${activeTab == null ? "hidden" : ""}`}>
         <Outlet />
       </div>
 
