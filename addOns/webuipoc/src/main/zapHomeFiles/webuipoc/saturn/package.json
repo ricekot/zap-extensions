@@ -23,5 +23,9 @@
     "postcss": "^8.4.5",
     "tailwindcss": "^3.0.13",
     "vite": "^2.7.2"
+  },
+  "zaproxy": {
+    "buildCommand": "npm run build",
+    "outputDirectory": "dist"
   }
 }

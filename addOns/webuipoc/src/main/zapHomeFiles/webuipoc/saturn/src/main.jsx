@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import reactDom from "react-dom";
 import Root from "./routes/root";
 import "./index.css";
@@ -7,10 +7,9 @@ import {
     RouterProvider,
 } from "react-router-dom";
 import ErrorPage from "./error-page";
-import SitesTree from "./routes/sites-tree";
-import ScriptConsole from "./routes/script-console";
-import AutomationFramework from "./routes/automation-framework";
 import Settings from "./routes/settings";
+import RequestResponseViewer from "./routes/request-response";
+import ScriptConsole from "./routes/script-console";
 
 const router = createBrowserRouter([
     {
@@ -19,20 +18,16 @@ const router = createBrowserRouter([
         errorElement: <ErrorPage />,
         children: [
             {
-                path: "/sites-tree",
-                element: <SitesTree />,
-            },
-            {
-                path: "/script-console",
-                element: <ScriptConsole />,
-            },
-            {
-                path: "/automation-framework",
-                element: <AutomationFramework />,
-            },
-            {
-                path: "/settings",
+                path: "settings",
                 element: <Settings />,
+            },
+            {
+                path: "request-response",
+                element: <RequestResponseViewer />
+            },
+            {
+                path: "script-console",
+                element: <ScriptConsole />
             }
         ]
     },
