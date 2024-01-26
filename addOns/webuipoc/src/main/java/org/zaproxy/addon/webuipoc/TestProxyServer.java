@@ -216,9 +216,7 @@ public class TestProxyServer {
 
                 if (isApiRequest(msg)) {
                     handleApiRequest(ctx, msg);
-                    if (msg.getRequestHeader().getURI().getEscapedPath().startsWith("/UI/")) {
-                        msg.getResponseHeader().setHeader(HttpHeader.X_FRAME_OPTION, "SAMEORIGIN");
-                    }
+                    msg.getResponseHeader().setHeader(HttpHeader.X_FRAME_OPTION, "SAMEORIGIN");
                     return;
                 }
 

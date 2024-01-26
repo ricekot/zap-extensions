@@ -101,7 +101,7 @@ export default function Root() {
 
       <div className="flex flex-col flex-1">
         <WorkbenchTabs />
-        <div className="flex-1">
+        <div className="flex-1 h-1">
           <Outlet />
         </div>
       </div>
