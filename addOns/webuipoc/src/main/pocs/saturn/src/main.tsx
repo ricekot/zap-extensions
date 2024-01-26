@@ -1,5 +1,5 @@
 import React from "react";
-import reactDom from "react-dom";
+import ReactDOM from "react-dom/client";
 import Root from "./routes/root";
 import "./index.css";
 import {
@@ -32,12 +32,11 @@ const router = createBrowserRouter([
         ]
     },
 ], {
-    basename: import.meta.env.BASE_URL?.replace(/\/$/, "")
+    basename: (import.meta as any).env.BASE_URL?.replace(/\/$/, "")
 });
 
-reactDom.render(
+ReactDOM.createRoot(document.getElementById("root")).render(
     <React.StrictMode>
         <RouterProvider router={router} />
-    </React.StrictMode>,
-    document.getElementById("root")
+    </React.StrictMode>
 );

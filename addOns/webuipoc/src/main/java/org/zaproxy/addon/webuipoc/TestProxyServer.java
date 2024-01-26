@@ -19,7 +19,6 @@
  */
 package org.zaproxy.addon.webuipoc;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -59,7 +58,6 @@ public class TestProxyServer {
     public static final String API_PATH = "/api/";
 
     private static final Logger LOGGER = LogManager.getLogger(TestProxyServer.class);
-    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private ExtensionWebUiPoc extension;
     private ExtensionNetwork extensionNetwork;
