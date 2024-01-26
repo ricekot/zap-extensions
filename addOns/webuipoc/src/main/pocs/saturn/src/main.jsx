@@ -31,7 +31,9 @@ const router = createBrowserRouter([
             }
         ]
     },
-]);
+], {
+    basename: import.meta.env.BASE_URL?.replace(/\/$/, "")
+});
 
 reactDom.render(
     <React.StrictMode>
