@@ -5,24 +5,29 @@ import SitesTree from "../components/sites-tree";
 import ScriptsList from "../components/scripts-list";
 import AutomationFramework from "../components/automation-framework";
 import React from "react";
+import scriptsIcon from "../assets/code.svg";
+import sitesTreeIcon from "../assets/globe2.svg";
+import automationIcon from "../assets/automation.svg";
+import settingsIcon from "../assets/gear.svg";
+import zapIcon from "../assets/zap.svg";
 
 export default function Root() {
 
   type MenuItem = {
     id: string
     title: string
-    iconSrc: string
+    icon: string
     component?: JSX.Element
   }
 
   const TopMenuItems: MenuItem[] = [
-    { id: "sites-tree", title: "Sites Tree", iconSrc: "globe2.svg", component: <SitesTree />, },
-    { id: "scripts", title: "Scripts", iconSrc: "code.svg", component: <ScriptsList />, },
-    { id: "automation-framework", title: "Automation Framework", iconSrc: "automation.svg", component: <AutomationFramework />, },
+    { id: "sites-tree", title: "Sites Tree", icon: sitesTreeIcon, component: <SitesTree />, },
+    { id: "scripts", title: "Scripts", icon: scriptsIcon, component: <ScriptsList />, },
+    { id: "automation-framework", title: "Automation Framework", icon: automationIcon, component: <AutomationFramework />, },
   ];
 
   const BottomMenuItems: MenuItem[] = [
-    { id: "settings", title: "Settings", iconSrc: "gear.svg" },
+    { id: "settings", title: "Settings", icon: settingsIcon },
   ]
 
   const [activeMenuItem, setActiveMenuItem] = useState(null);
@@ -48,7 +53,7 @@ export default function Root() {
                 title={item.title}
                 onClick={() => toggleActiveMenuItem(item)}
               >
-                <img src={`./src/assets/${item.iconSrc}`} />
+                <img src={item.icon} />
               </li>
             )
             )}
@@ -69,7 +74,7 @@ export default function Root() {
                             ${activeMenuItem?.id == item.id ? "bg-light-white" : ""}`}
                   title={item.title}
                 >
-                  <img src={`./src/assets/${item.iconSrc}`} />
+                  <img src={item.icon} />
                 </li>
               </Link>
             )
@@ -81,7 +86,7 @@ export default function Root() {
                 onClick={() => setActiveMenuItem(null)}
               >
                 <img
-                  src="./src/assets/zap.svg"
+                  src={zapIcon}
                 />
               </li>
             </Link>

@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.webuipoc;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -58,6 +59,7 @@ public class TestProxyServer {
     public static final String API_PATH = "/api/";
 
     private static final Logger LOGGER = LogManager.getLogger(TestProxyServer.class);
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private ExtensionWebUiPoc extension;
     private ExtensionNetwork extensionNetwork;
@@ -216,6 +218,9 @@ public class TestProxyServer {
 
                 if (isApiRequest(msg)) {
                     handleApiRequest(ctx, msg);
+                    if (msg.getRequestHeader().getURI().getEscapedPath().startsWith("/UI/")) {
+                        msg.getResponseHeader().setHeader(HttpHeader.X_FRAME_OPTION, "SAMEORIGIN");
+                    }
                     return;
                 }
 
@@ -262,7 +267,7 @@ public class TestProxyServer {
                 }
 
                 msg.setResponseBody(body);
-                String contentType = "text/plain"; // Fallback
+                String contentType = null;
                 if (name.endsWith(".html")) {
                     contentType = "text/html";
                 } else if (name.endsWith(".css")) {
@@ -273,6 +278,8 @@ public class TestProxyServer {
                     contentType = "application/json";
                 } else if (name.endsWith(".yaml")) {
                     contentType = "application/yaml";
+                } else if (name.endsWith(".svg")) {
+                    contentType = "image/svg+xml";
                 } else {
                     LOGGER.error("Unexpected tutorial file extension: {}", name);
                 }
