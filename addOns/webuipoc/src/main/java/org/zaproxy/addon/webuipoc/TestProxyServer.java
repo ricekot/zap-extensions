@@ -56,6 +56,7 @@ public class TestProxyServer {
     public static final String INDEX_PAGE = "index.html";
     public static final String ERROR_404_PAGE = "404.html";
     public static final String API_PATH = "/api/";
+    private static final String SATURN_PATH = "/saturn/";
 
     private static final Logger LOGGER = LogManager.getLogger(TestProxyServer.class);
 
@@ -78,7 +79,7 @@ public class TestProxyServer {
     /** The server is started after initialisation so that the parameters will have been loaded. */
     public void start() {
         try {
-            getServer().start("localhost", 1337);
+            getServer().start("0.0.0.0", 1337);
         } catch (IOException e) {
             LOGGER.warn("An error occurred while starting the server.", e);
         }
@@ -110,9 +111,10 @@ public class TestProxyServer {
         sb.append("Access-Control-Allow-Methods: GET,POST,OPTIONS\r\n");
         sb.append("Access-Control-Allow-Headers: ZAP-Header\r\n");
         // If this CSP is causing you problems then talk to the ZAP team
+        // TODO: Figure out how to make React POCs work without 'unsafe-inline'
         sb.append(
-                "Content-Security-Policy: default-src 'none'; script-src 'self'; connect-src 'self'; "
-                        + "child-src 'self'; img-src 'self' data:; font-src 'self' data:; style-src 'self'\r\n");
+                "Content-Security-Policy: default-src 'none'; script-src 'self' 'unsafe-inline'; connect-src 'self'; "
+                        + "child-src 'self'; img-src 'self' data:; font-src 'self' data:; style-src 'self' 'unsafe-inline'\r\n");
         sb.append("X-Frame-Options: SAMEORIGIN\r\n");
         sb.append("X-XSS-Protection: 1; mode=block\r\n");
         sb.append("X-Content-Type-Options: nosniff\r\n");
@@ -151,7 +153,7 @@ public class TestProxyServer {
 
     public String getPageName(HttpMessage msg) {
         String name = msg.getRequestHeader().getURI().getEscapedName();
-        if (name.length() == 0) {
+        if (name.isEmpty()) {
             name = INDEX_PAGE;
         }
         int qIndex = name.indexOf('?');
@@ -205,6 +207,27 @@ public class TestProxyServer {
                 || path.startsWith("/script.js");
     }
 
+    private static String getResponseContentType(String name) {
+        if (!name.contains(".")) {
+            return "text/html";
+        } else if (name.endsWith(".html")) {
+            return "text/html";
+        } else if (name.endsWith(".css")) {
+            return "text/css";
+        } else if (name.endsWith(".js")) {
+            return "text/javascript";
+        } else if (name.endsWith(".json")) {
+            return "application/json";
+        } else if (name.endsWith(".yaml")) {
+            return "application/yaml";
+        } else if (name.endsWith(".svg")) {
+            return "image/svg+xml";
+        } else {
+            LOGGER.error("Unexpected tutorial file extension: {}", name);
+            return null;
+        }
+    }
+
     private class TestListener implements HttpMessageHandler {
 
         @Override
@@ -214,6 +237,11 @@ public class TestProxyServer {
             try {
                 String path = msg.getRequestHeader().getURI().getEscapedPath();
 
+                if (path.startsWith(SATURN_PATH) && !path.contains(".")) {
+                    // React App which uses client-side routing
+                    path = "/saturn/index.html";
+                }
+
                 if (isApiRequest(msg)) {
                     handleApiRequest(ctx, msg);
                     msg.getResponseHeader().setHeader(HttpHeader.X_FRAME_OPTION, "SAMEORIGIN");
@@ -222,8 +250,6 @@ public class TestProxyServer {
 
                 File file = new File(extension.getBaseDirectory(), path);
                 String name = getPageName(msg);
-                String body;
-
                 if (file.isDirectory()) {
                     file = new File(file, INDEX_PAGE);
                     name = INDEX_PAGE;
@@ -233,8 +259,8 @@ public class TestProxyServer {
                     file = new File(extension.getBaseDirectory(), ERROR_404_PAGE);
                     name = ERROR_404_PAGE;
                 }
-                body = Files.readString(file.toPath(), StandardCharsets.UTF_8);
                 if (INDEX_PAGE.equals(name) && "/".equals(path)) {
+                    String body = Files.readString(file.toPath(), StandardCharsets.UTF_8);
                     // List the top level directories
                     String[] directories =
                             extension
@@ -260,28 +286,13 @@ public class TestProxyServer {
                                     });
                     sb.append("</ul>");
                     body = body.replace("<!-- SUBDIRS -->", sb.toString());
-                }
-
-                msg.setResponseBody(body);
-                String contentType = null;
-                if (name.endsWith(".html")) {
-                    contentType = "text/html";
-                } else if (name.endsWith(".css")) {
-                    contentType = "text/css";
-                } else if (name.endsWith(".js")) {
-                    contentType = "text/javascript";
-                } else if (name.endsWith(".json")) {
-                    contentType = "application/json";
-                } else if (name.endsWith(".yaml")) {
-                    contentType = "application/yaml";
-                } else if (name.endsWith(".svg")) {
-                    contentType = "image/svg+xml";
+                    msg.setResponseBody(body);
                 } else {
-                    LOGGER.error("Unexpected tutorial file extension: {}", name);
+                    msg.setResponseBody(Files.readAllBytes(file.toPath()));
                 }
                 msg.setResponseHeader(
                         TestProxyServer.getDefaultResponseHeader(
-                                contentType, msg.getResponseBody().length()));
+                                getResponseContentType(path), msg.getResponseBody().length()));
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
             }
