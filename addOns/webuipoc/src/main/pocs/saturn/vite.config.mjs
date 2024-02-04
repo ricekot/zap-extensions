@@ -9,5 +9,5 @@ export default defineConfig({
   server: {
     // port: 8001,
   },
-  assetsInclude: ["**/*.yaml"]
+  assetsInclude: ["**/*.ico"],
 });

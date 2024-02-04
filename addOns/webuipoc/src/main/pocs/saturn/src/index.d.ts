@@ -1,2 +1,2 @@
-declare module '*.svg';
-declare module '*.yaml';
+declare module "*.svg";
+declare module "*.yaml";

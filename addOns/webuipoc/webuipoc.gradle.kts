@@ -67,4 +67,6 @@ zapAddOn {
 dependencies {
     zapAddOn("commonlib")
     zapAddOn("network")
+
+    compileOnly("jakarta.websocket:jakarta.websocket-api:2.1.1")
 }

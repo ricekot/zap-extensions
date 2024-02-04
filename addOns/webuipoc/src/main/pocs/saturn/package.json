@@ -9,6 +9,9 @@
     "build:forAddOn": "BASE_URL=/saturn/ vite build"
   },
   "dependencies": {
+    "@codemirror/lang-html": "^6.4.8",
+    "@codemirror/lang-json": "^6.0.1",
+    "@uiw/react-codemirror": "^4.21.21",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.21.3"
@@ -17,6 +20,7 @@
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.17",
     "postcss": "^8.4.33",
+    "prettier": "3.2.5",
     "tailwindcss": "^3.4.1",
     "vite": "^5.0.12"
   },

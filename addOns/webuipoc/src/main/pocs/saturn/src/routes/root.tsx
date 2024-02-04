@@ -12,35 +12,47 @@ import settingsIcon from "../assets/gear.svg";
 import zapIcon from "../assets/zap.svg";
 
 export default function Root() {
-
   type MenuItem = {
-    id: string
-    title: string
-    icon: string
-    component?: JSX.Element
-  }
+    id: string;
+    title: string;
+    icon: string;
+    component?: JSX.Element;
+  };
 
   const TopMenuItems: MenuItem[] = [
-    { id: "sites-tree", title: "Sites Tree", icon: sitesTreeIcon, component: <SitesTree />, },
-    { id: "scripts", title: "Scripts", icon: scriptsIcon, component: <ScriptsList />, },
-    { id: "automation-framework", title: "Automation Framework", icon: automationIcon, component: <AutomationFramework />, },
+    {
+      id: "sites-tree",
+      title: "Sites Tree",
+      icon: sitesTreeIcon,
+      component: <SitesTree />,
+    },
+    {
+      id: "scripts",
+      title: "Scripts",
+      icon: scriptsIcon,
+      component: <ScriptsList />,
+    },
+    {
+      id: "automation-framework",
+      title: "Automation Framework",
+      icon: automationIcon,
+      component: <AutomationFramework />,
+    },
   ];
 
   const BottomMenuItems: MenuItem[] = [
     { id: "settings", title: "Settings", icon: settingsIcon },
-  ]
+  ];
 
   const [activeMenuItem, setActiveMenuItem] = useState(null);
 
   const toggleActiveMenuItem = (item: MenuItem) => {
     setActiveMenuItem(item?.id == activeMenuItem?.id ? null : item);
-  }
+  };
 
   return (
     <div className="flex">
-      <div
-        className="flex flex-col flex-none w-16 bg-slate-800 h-screen p-1"
-      >
+      <div className="flex flex-col flex-none w-16 bg-slate-800 h-screen p-1">
         {/* Top Menu */}
         <div className="flex-none">
           <ul>
@@ -55,8 +67,7 @@ export default function Root() {
               >
                 <img src={item.icon} />
               </li>
-            )
-            )}
+            ))}
           </ul>
         </div>
 
@@ -77,25 +88,23 @@ export default function Root() {
                   <img src={item.icon} />
                 </li>
               </Link>
-            )
-            )}
+            ))}
             <Link to="/">
               <li
                 className="flex rounded-md p-2 items-center mt-2"
                 title="Zed Attack Proxy"
                 onClick={() => setActiveMenuItem(null)}
               >
-                <img
-                  src={zapIcon}
-                />
+                <img src={zapIcon} />
               </li>
             </Link>
           </ul>
         </div>
-
       </div>
 
-      <div className={`flex-none bg-slate-300 w-96 ${activeMenuItem == null ? "hidden" : ""}`}>
+      <div
+        className={`flex-none bg-slate-300 w-96 ${activeMenuItem == null ? "hidden" : ""}`}
+      >
         {activeMenuItem?.component}
       </div>
 
@@ -105,7 +114,6 @@ export default function Root() {
           <Outlet />
         </div>
       </div>
-
     </div>
   );
-};
+}
