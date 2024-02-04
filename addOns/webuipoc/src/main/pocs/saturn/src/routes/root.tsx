@@ -6,7 +6,7 @@ import ScriptsList from "../components/scripts-list";
 import AutomationFramework from "../components/automation-framework";
 import React from "react";
 import scriptsIcon from "../assets/code.svg";
-import sitesTreeIcon from "../assets/globe2.svg";
+import sitesTreeIcon from "../assets/globe.svg";
 import automationIcon from "../assets/automation.svg";
 import settingsIcon from "../assets/gear.svg";
 import zapIcon from "../assets/zap.svg";
