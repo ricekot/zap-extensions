@@ -12,7 +12,9 @@
     "@codemirror/lang-html": "^6.4.8",
     "@codemirror/lang-json": "^6.0.1",
     "@uiw/react-codemirror": "^4.21.21",
+    "lodash-es": "^4.17.21",
     "react": "^18.2.0",
+    "react-arborist": "^3.4.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.21.3"
   },

@@ -68,5 +68,11 @@ dependencies {
     zapAddOn("commonlib")
     zapAddOn("network")
 
+    val nettyVersion = "4.1.100.Final"
+    implementation("io.netty:netty-codec:$nettyVersion")
+    implementation("io.netty:netty-codec-http:$nettyVersion")
+    implementation("io.netty:netty-handler:$nettyVersion")
+    implementation("io.netty:netty-transport:$nettyVersion")
+
     compileOnly("jakarta.websocket:jakarta.websocket-api:2.1.1")
 }

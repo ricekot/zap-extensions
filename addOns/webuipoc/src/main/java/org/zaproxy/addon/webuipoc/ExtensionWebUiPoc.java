@@ -25,6 +25,7 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.zaproxy.addon.network.ExtensionNetwork;
+import org.zaproxy.zap.ZAP;
 
 /** A test ZAP add-on that supports PoC web based UIs. */
 public class ExtensionWebUiPoc extends ExtensionAdaptor {

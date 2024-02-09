@@ -34,4 +34,6 @@ Building for the add-on is slightly different to the normal build as it uses a d
 - https://github.com/Sridhar-C-25/sidebar_reactTailwind/tree/main
 - https://reactrouter.com/en/main/start/tutorial
 - https://tailwindcomponents.com/component/404-page-not-found
-- https://github.com/Microsoft/monaco-editor/issues/604#issuecomment-344214706
+- https://codemirror.net/
+- https://github.com/uiwjs/react-codemirror
+- https://github.com/brimdata/react-arborist

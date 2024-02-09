@@ -33,6 +33,7 @@ import net.sf.json.JSON;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.model.SiteMapEventPublisher;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpInputStream;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
@@ -43,6 +44,8 @@ import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 import org.zaproxy.addon.network.server.Server;
+import org.zaproxy.addon.webuipoc.websocket.WebSocketServer;
+import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.network.HttpRequestBody;
 
@@ -63,10 +66,13 @@ public class TestProxyServer {
     private ExtensionWebUiPoc extension;
     private ExtensionNetwork extensionNetwork;
     private Server server;
+    private WebSocketServer websocketServer;
 
     public TestProxyServer(ExtensionWebUiPoc extension, ExtensionNetwork extensionNetwork) {
         this.extension = extension;
         this.extensionNetwork = extensionNetwork;
+
+        ZAP.getEventBus().registerConsumer(new SitesTreeListener(this), SiteMapEventPublisher.getPublisher().getPublisherName());
     }
 
     private Server getServer() {
@@ -76,11 +82,19 @@ public class TestProxyServer {
         return server;
     }
 
+    WebSocketServer getWebSocketServer() {
+        if (websocketServer == null) {
+            this.websocketServer = new WebSocketServer();
+        }
+        return websocketServer;
+    }
+
     /** The server is started after initialisation so that the parameters will have been loaded. */
     public void start() {
         try {
             getServer().start("0.0.0.0", 1337);
-        } catch (IOException e) {
+            getWebSocketServer().start("0.0.0.0", 1338);
+        } catch (Exception e) {
             LOGGER.warn("An error occurred while starting the server.", e);
         }
     }
@@ -113,7 +127,7 @@ public class TestProxyServer {
         // If this CSP is causing you problems then talk to the ZAP team
         // TODO: Figure out how to make React POCs work without 'unsafe-inline'
         sb.append(
-                "Content-Security-Policy: default-src 'none'; script-src 'self' 'unsafe-inline'; connect-src 'self'; "
+                "Content-Security-Policy: default-src 'none'; script-src 'self' 'unsafe-inline'; connect-src ws://localhost:1338/websocket; "
                         + "child-src 'self'; img-src 'self' data:; font-src 'self' data:; style-src 'self' 'unsafe-inline'\r\n");
         sb.append("X-Frame-Options: SAMEORIGIN\r\n");
         sb.append("X-XSS-Protection: 1; mode=block\r\n");
