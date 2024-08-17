@@ -1,0 +1,8 @@
+.cm-editor {
+  height: 100%;
+  overflow: auto;
+}
+
+.cm-gutter.cm-lineNumbers {
+  min-width: 32px;
+}

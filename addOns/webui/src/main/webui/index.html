@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ZAP Web UI</title>
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/assets/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/assets/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="/assets/favicon-16x16.png"
+    />
+    <link rel="manifest" href="/assets/site.webmanifest" />
+    <link
+      rel="mask-icon"
+      href="/assets/safari-pinned-tab.svg"
+      color="#5bbad5"
+    />
+    <meta name="msapplication-TileColor" content="#da532c" />
+    <meta name="theme-color" content="#ffffff" />
+    <script type="module" src="./bundle.js"></script>
+  </head>
+
+  <body>
+    <div class="flex">
+      <!-- Navbar -->
+      <div class="flex flex-col flex-none w-16 bg-slate-800 h-screen p-1">
+        <!-- Top Menu Items -->
+        <div class="flex-none">
+          <ul>
+            <li
+              class="zap-menu-item flex rounded-md p-2 cursor-pointer hover:bg-gray-700 items-center"
+              title="Sites Tree"
+              hx-get="/render/sidebar/sitesTree"
+              hx-target="#sidebar-div"
+              script="on click remove .bg-gray-700 from .zap-menu-item then add .bg-gray-700"
+            >
+              <img src="/assets/globe.svg" alt="Sites Tree Icon" />
+            </li>
+            <li
+              class="zap-menu-item flex rounded-md p-2 cursor-pointer hover:bg-gray-700 items-center mt-2"
+              title="Scripts"
+              hx-get="/render/sidebar/scriptsList"
+              hx-target="#sidebar-div"
+              script="on click remove .bg-gray-700 from .zap-menu-item then add .bg-gray-700"
+            >
+              <img src="/assets/code.svg" alt="Scripts Icon" />
+            </li>
+            <li
+              class="zap-menu-item flex rounded-md p-2 cursor-pointer hover:bg-gray-700 items-center mt-2"
+              title="Automation Framework"
+              script="on click remove .bg-gray-700 from .zap-menu-item then add .bg-gray-700"
+            >
+              <img
+                src="/assets/automation.svg"
+                alt="Automation Framework Icon"
+              />
+            </li>
+          </ul>
+        </div>
+
+        <!-- Fill the space -->
+        <div class="flex-1"></div>
+
+        <!-- Bottom Menu Items -->
+        <div class="flex-none">
+          <ul>
+            <li
+              class="zap-menu-item flex rounded-md p-2 cursor-pointer hover:bg-gray-700 items-center mt-2"
+              title="Settings"
+              script="on click remove .bg-gray-700 from .zap-menu-item then add .bg-gray-700"
+            >
+              <a href="/settings">
+                <img src="/assets/gear.svg" alt="Settings Icon" />
+              </a>
+            </li>
+            <li
+              class="flex rounded-md p-2 items-center mt-2"
+              title="Zed Attack Proxy"
+            >
+              <a href="/webui/public">
+                <img src="/assets/zap.svg" alt="ZAP Icon" />
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div id="sidebar-div" class="flex-none bg-slate-300 w-96 h-screen"></div>
+
+      <!-- Workbench -->
+      <div id="workbench-div" class="flex flex-col flex-1 h-screen"></div>
+    </div>
+  </body>
+</html>

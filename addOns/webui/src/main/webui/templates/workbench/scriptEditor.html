@@ -1,0 +1,15 @@
+<script th:inline="javascript">
+  /*<![CDATA[*/
+  initZapScriptEditor();
+  scriptEditor.dispatch({
+    changes: {
+      from: 0,
+      to: scriptEditor.state.doc.length,
+      insert: /*[[${script.getContents()}]]*/ "Script Contents",
+    },
+  });
+  // document.querySelector('.cm-editor').classList.add('h-full', 'overflow-auto');
+  /*]]>*/
+</script>
+
+<div id="script-editor" class="h-full" th:text="${''}">Script Editor</div>

@@ -1,0 +1,38 @@
+<!--
+    Sites Tree Sidebar
+    Updated via load polling, see https://htmx.org/docs/#load_polling.
+-->
+
+<div
+  hx-get="/render/sidebar/sitesTree"
+  hx-trigger="load delay:2s"
+  hx-swap="outerHTML"
+>
+  <h1 class="m-2 mb-4 text-2xl">Sites Tree</h1>
+  <div
+    class="pl-4"
+    th:fragment="renderNode(node)"
+    th:if="${node != null and node.getChildCount() > 0}"
+  >
+    <div th:each="child: ${node.children()}">
+      <div
+        class="m-1 hover:bg-slate-400 bg-cover"
+        hx-get="/render/workbench/requestResponseViewer"
+        hx-include="find input[name='hrefId']"
+        hx-target="#workbench-div"
+        hx-swap="innerHTML"
+        script="on click if #script-editor exists then "
+      >
+        <input
+          type="hidden"
+          name="hrefId"
+          th:if="${child.getHistoryReference() != null}"
+          th:value="${child.getHistoryReference().getHistoryId()}"
+        />
+        <code th:text="${child.getNodeName()}">Node</code>
+      </div>
+      <div th:replace="~{ :: renderNode(${child})}"></div>
+    </div>
+  </div>
+  <div th:replace="~{ :: renderNode(${tree.getRoot()})}"></div>
+</div>

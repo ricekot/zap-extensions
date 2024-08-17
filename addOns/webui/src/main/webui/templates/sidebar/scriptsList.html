@@ -1,0 +1,42 @@
+<script>
+  async function upsertScriptEditor(scriptName) {
+    if (!document.querySelector("#script-editor")) {
+      document.querySelector("#workbench-div").innerHTML =
+        `<div id="script-editor" class="h-full"></div>`;
+      initZapScriptEditor();
+    }
+    await fetch(`/render/view/scriptContent?scriptName=${scriptName}`)
+      .then((response) => response.text())
+      .then((data) => {
+        const parser = new DOMParser();
+        const htmlDoc = parser.parseFromString(data, "text/html");
+        const scriptContent =
+          htmlDoc.querySelector("#script-content").innerHTML;
+        scriptEditor.dispatch({
+          changes: {
+            from: 0,
+            to: scriptEditor.state.doc.length,
+            insert: scriptContent,
+          },
+        });
+      });
+  }
+</script>
+
+<div class="flex flex-col h-full">
+  <h1 class="m-2 mb-4 text-2xl">Scripts</h1>
+  <div class="flex-1 h-full overflow-auto">
+    <div th:each="entry : ${scriptsMap}">
+      <h2 class="m-2 mb-4 text-xl" th:text="${entry.key}">Script Type</h2>
+      <ul class="m-4">
+        <li
+          class="hover:bg-slate-400 bg-cover"
+          th:each="scriptName : ${entry.value}"
+          th:script="'on click call upsertScriptEditor(\'' + ${scriptName} + '\')'"
+        >
+          <span th:text="${scriptName}">Script Name</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
