@@ -23,10 +23,12 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import javax.swing.AbstractButton;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -34,7 +36,13 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.text.DefaultCaret;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
@@ -47,6 +55,7 @@ import org.zaproxy.zap.utils.ThreadUtils;
 import org.zaproxy.zap.utils.TimeStampUtils;
 import org.zaproxy.zap.utils.ZapTextArea;
 import org.zaproxy.zap.view.OutputSource;
+import org.zaproxy.zap.view.OverlayIcon;
 import org.zaproxy.zap.view.TabbedPanel2;
 import org.zaproxy.zap.view.ZapToggleButton;
 
@@ -77,6 +86,8 @@ public class TabbedOutputPanel extends OutputPanel {
             getImageIcon("/org/zaproxy/addon/commonlib/resources/ui-scroll-pane.png");
     private static final ImageIcon SCROLL_LOCK_ENABLED_ICON =
             getImageIcon("/org/zaproxy/addon/commonlib/resources/ui-scroll-lock-pane.png");
+    private static final ImageIcon GREEN_BADGE_CORNER_ICON =
+            getImageIcon("/org/zaproxy/addon/commonlib/resources/green-badge-corner.png");
 
     private final TabbedPanel2 tabbedPanel;
 
@@ -118,6 +129,11 @@ public class TabbedOutputPanel extends OutputPanel {
             for (Component tab : tabbedPanel.getTabList()) {
                 if (tab.getName().equals(source.getName())) {
                     tabbedPanel.removeTab((AbstractPanel) tab);
+                    Arrays.stream(tabbedPanel.getChangeListeners())
+                            .filter(OutputPanelChangeListener.class::isInstance)
+                            .map(OutputPanelChangeListener.class::cast)
+                            .filter(listener -> tab.equals(listener.getOutputPanel()))
+                            .forEach(tabbedPanel::removeChangeListener);
                     break;
                 }
             }
@@ -138,12 +154,27 @@ public class TabbedOutputPanel extends OutputPanel {
         var outputPanel = new AbstractPanel();
         outputPanel.setName(name);
         outputPanel.setLayout(new BorderLayout());
-        if (attributes.containsKey(ATTRIBUTE_ICON)
-                && attributes.get(ATTRIBUTE_ICON) instanceof Icon) {
-            outputPanel.setIcon((Icon) attributes.get(ATTRIBUTE_ICON));
-        }
+        Icon icon =
+                attributes.containsKey(ATTRIBUTE_ICON)
+                                && attributes.get(ATTRIBUTE_ICON) instanceof Icon
+                        ? (Icon) attributes.get(ATTRIBUTE_ICON)
+                        : DOC_ICON;
+        outputPanel.setIcon(icon);
+        tabbedPanel.addChangeListener(
+                new OutputPanelChangeListener(
+                        outputPanel,
+                        e -> {
+                            if (outputPanel.isShowing()
+                                    && outputPanel.equals(tabbedPanel.getSelectedComponent())) {
+                                setTabIcon(outputPanel, icon);
+                            }
+                            return null;
+                        }));
 
         ZapTextArea txtOutput = buildOutputTextArea();
+        txtOutput
+                .getDocument()
+                .addDocumentListener(buildOutputTextAreaDocumentListener(outputPanel, icon));
         JToolBar toolBar = buildToolbar(txtOutput, attributes);
         outputPanel.add(toolBar, BorderLayout.PAGE_START);
         var jScrollPane = new JScrollPane();
@@ -183,6 +214,36 @@ public class TabbedOutputPanel extends OutputPanel {
                     }
                 });
         return txtOutput;
+    }
+
+    private DocumentListener buildOutputTextAreaDocumentListener(
+            AbstractPanel outputPanel, Icon icon) {
+        return new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                if (!(outputPanel.isShowing()
+                                && outputPanel.equals(tabbedPanel.getSelectedComponent()))
+                        && icon instanceof ImageIcon icon) {
+                    var overlayIcon = new OverlayIcon(icon);
+                    overlayIcon.add(GREEN_BADGE_CORNER_ICON);
+                    setTabIcon(outputPanel, overlayIcon);
+                }
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {}
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {}
+        };
+    }
+
+    private void setTabIcon(AbstractPanel outputPanel, Icon icon) {
+        outputPanel.setIcon(icon);
+        int index = tabbedPanel.indexOfComponent(outputPanel);
+        if (index != -1) {
+            tabbedPanel.setIconAt(index, icon);
+        }
     }
 
     private static JToolBar buildToolbar(ZapTextArea txtOutput, Map<String, Object> attributes) {
@@ -270,6 +331,9 @@ public class TabbedOutputPanel extends OutputPanel {
     @Override
     public void clear() {
         tabbedPanel.removeAll();
+        Arrays.stream(tabbedPanel.getChangeListeners())
+                .filter(OutputPanelChangeListener.class::isInstance)
+                .forEach(tabbedPanel::removeChangeListener);
         txtOutputs.clear();
         addNewOutputSource(DEFAULT_OUTPUT_SOURCE_NAME);
     }
@@ -300,5 +364,16 @@ public class TabbedOutputPanel extends OutputPanel {
 
     private static ImageIcon getImageIcon(String resourceName) {
         return DisplayUtils.getScaledIcon(TabbedOutputPanel.class.getResource(resourceName));
+    }
+
+    @AllArgsConstructor
+    private static class OutputPanelChangeListener implements ChangeListener {
+        @Getter private final AbstractPanel outputPanel;
+        private final Function<ChangeEvent, Void> listener;
+
+        @Override
+        public void stateChanged(ChangeEvent e) {
+            listener.apply(e);
+        }
     }
 }
