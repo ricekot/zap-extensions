@@ -31,6 +31,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.automation.jobs.PolicyDefinition.AlertTagRuleConfig;
 import org.zaproxy.addon.automation.jobs.PolicyDefinition.Rule;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
@@ -54,6 +55,12 @@ public abstract class ActiveScanPolicyDialog extends StandardFieldsDialog {
 
     private JTable rulesTable = null;
     private AscanRulesTableModel rulesModel = null;
+
+    private JButton addAlertTagRuleButton = null;
+    private JButton modifyAlertTagRuleButton = null;
+    private JButton removeAlertTagRuleButton = null;
+    private JTable alertTagRulesTable = null;
+    private AlertTagRulesTableModel alertTagRulesModel = null;
 
     public ActiveScanPolicyDialog(String title, Dimension dimension, String[] tabLabels) {
         super(View.getSingleton().getMainFrame(), title, dimension, tabLabels);
@@ -185,4 +192,105 @@ public abstract class ActiveScanPolicyDialog extends StandardFieldsDialog {
     }
 
     protected abstract List<Rule> getRules();
+
+    protected JButton getAddAlertTagRuleButton() {
+        if (this.addAlertTagRuleButton == null) {
+            this.addAlertTagRuleButton =
+                    new JButton(Constant.messages.getString("automation.dialog.button.add"));
+            this.addAlertTagRuleButton.addActionListener(
+                    e -> {
+                        var dialog =
+                                new AddAlertTagRuleDialog(
+                                        this, null, getAlertTagRulesModel().getRowCount());
+                        dialog.setVisible(true);
+                    });
+        }
+        return this.addAlertTagRuleButton;
+    }
+
+    protected JButton getModifyAlertTagRuleButton() {
+        if (this.modifyAlertTagRuleButton == null) {
+            this.modifyAlertTagRuleButton =
+                    new JButton(Constant.messages.getString("automation.dialog.button.modify"));
+            modifyAlertTagRuleButton.setEnabled(false);
+            this.modifyAlertTagRuleButton.addActionListener(
+                    e -> {
+                        int row = getAlertTagRulesTable().getSelectedRow();
+                        var dialog =
+                                new AddAlertTagRuleDialog(
+                                        this,
+                                        getAlertTagRulesModel().getAlertTagRules().get(row),
+                                        row);
+                        dialog.setVisible(true);
+                    });
+        }
+        return this.modifyAlertTagRuleButton;
+    }
+
+    protected JButton getRemoveAlertTagRuleButton() {
+        if (this.removeAlertTagRuleButton == null) {
+            this.removeAlertTagRuleButton =
+                    new JButton(Constant.messages.getString("automation.dialog.button.remove"));
+            this.removeAlertTagRuleButton.setEnabled(false);
+            final ActiveScanPolicyDialog parent = this;
+            this.removeAlertTagRuleButton.addActionListener(
+                    e -> {
+                        if (JOptionPane.OK_OPTION
+                                == View.getSingleton()
+                                        .showConfirmDialog(
+                                                parent,
+                                                Constant.messages.getString(
+                                                        "automation.dialog.ascanpolicytagrules.table.remove.confirm"))) {
+                            getAlertTagRulesModel()
+                                    .remove(getAlertTagRulesTable().getSelectedRow());
+                        }
+                    });
+        }
+        return this.removeAlertTagRuleButton;
+    }
+
+    protected JTable getAlertTagRulesTable() {
+        if (alertTagRulesTable == null) {
+            alertTagRulesTable = new JTable();
+            alertTagRulesTable.setModel(getAlertTagRulesModel());
+            alertTagRulesTable
+                    .getSelectionModel()
+                    .addListSelectionListener(
+                            e -> {
+                                boolean singleRowSelected =
+                                        getAlertTagRulesTable().getSelectedRowCount() == 1;
+                                getModifyAlertTagRuleButton().setEnabled(singleRowSelected);
+                                getRemoveAlertTagRuleButton().setEnabled(singleRowSelected);
+                            });
+            alertTagRulesTable.addMouseListener(
+                    new MouseAdapter() {
+                        @Override
+                        public void mouseClicked(MouseEvent me) {
+                            if (me.getClickCount() == 2) {
+                                int row = alertTagRulesTable.getSelectedRow();
+                                if (row == -1) {
+                                    return;
+                                }
+                                var dialog =
+                                        new AddAlertTagRuleDialog(
+                                                ActiveScanPolicyDialog.this,
+                                                alertTagRulesModel.getAlertTagRules().get(row),
+                                                row);
+                                dialog.setVisible(true);
+                            }
+                        }
+                    });
+        }
+        return alertTagRulesTable;
+    }
+
+    protected AlertTagRulesTableModel getAlertTagRulesModel() {
+        if (alertTagRulesModel == null) {
+            alertTagRulesModel = new AlertTagRulesTableModel();
+            alertTagRulesModel.setAlertTagRules(getAlertTagRules());
+        }
+        return alertTagRulesModel;
+    }
+
+    protected abstract List<AlertTagRuleConfig> getAlertTagRules();
 }

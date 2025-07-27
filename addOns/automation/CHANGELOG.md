@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Support for exclude regexes to active scan config job.
 - Always run option for all jobs.
+- Allow selecting rules in policy definitions using alert tags.
 
 ### Changed
 - Job remains selected when moved in the GUI.

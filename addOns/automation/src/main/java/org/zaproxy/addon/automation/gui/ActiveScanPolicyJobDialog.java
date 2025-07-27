@@ -27,6 +27,7 @@ import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.zaproxy.addon.automation.jobs.ActiveScanPolicyJob;
 import org.zaproxy.addon.automation.jobs.JobUtils;
+import org.zaproxy.addon.automation.jobs.PolicyDefinition;
 import org.zaproxy.addon.automation.jobs.PolicyDefinition.Rule;
 import org.zaproxy.zap.utils.DisplayUtils;
 
@@ -38,7 +39,8 @@ public class ActiveScanPolicyJobDialog extends ActiveScanPolicyDialog {
     private static final String[] TAB_LABELS = {
         "automation.dialog.tab.params",
         "automation.dialog.ascan.tab.policydefaults",
-        "automation.dialog.ascan.tab.policyrules"
+        "automation.dialog.ascan.tab.policyrules",
+        "automation.dialog.ascan.tab.policyrulestags"
     };
 
     private static final String TITLE = "automation.dialog.ascanpolicy.title";
@@ -96,6 +98,12 @@ public class ActiveScanPolicyJobDialog extends ActiveScanPolicyDialog {
         buttons.add(getRemoveButton());
 
         this.addTableField(2, getRulesTable(), buttons);
+
+        List<JButton> tagRuleButtons = new ArrayList<>();
+        tagRuleButtons.add(getAddAlertTagRuleButton());
+        tagRuleButtons.add(getModifyAlertTagRuleButton());
+        tagRuleButtons.add(getRemoveAlertTagRuleButton());
+        this.addTableField(3, getAlertTagRulesTable(), tagRuleButtons);
     }
 
     @Override
@@ -129,5 +137,10 @@ public class ActiveScanPolicyJobDialog extends ActiveScanPolicyDialog {
     @Override
     protected List<Rule> getRules() {
         return job.getData().getPolicyDefinition().getRules();
+    }
+
+    @Override
+    protected List<PolicyDefinition.AlertTagRuleConfig> getAlertTagRules() {
+        return job.getData().getPolicyDefinition().getAlertTagRules();
     }
 }

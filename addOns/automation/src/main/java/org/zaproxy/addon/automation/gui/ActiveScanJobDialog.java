@@ -27,6 +27,7 @@ import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.zaproxy.addon.automation.jobs.ActiveScanJob;
 import org.zaproxy.addon.automation.jobs.ActiveScanJob.Parameters;
 import org.zaproxy.addon.automation.jobs.JobUtils;
+import org.zaproxy.addon.automation.jobs.PolicyDefinition;
 import org.zaproxy.addon.automation.jobs.PolicyDefinition.Rule;
 import org.zaproxy.zap.utils.DisplayUtils;
 
@@ -39,6 +40,7 @@ public class ActiveScanJobDialog extends ActiveScanPolicyDialog {
         "automation.dialog.tab.params",
         "automation.dialog.ascan.tab.policydefaults",
         "automation.dialog.ascan.tab.policyrules",
+        "automation.dialog.ascan.tab.policyrulestags",
         "automation.dialog.ascan.tab.adv"
     };
 
@@ -142,6 +144,12 @@ public class ActiveScanJobDialog extends ActiveScanPolicyDialog {
         buttons.add(getRemoveButton());
 
         this.addTableField(2, getRulesTable(), buttons);
+
+        List<JButton> tagRuleButtons = new ArrayList<>();
+        tagRuleButtons.add(getAddAlertTagRuleButton());
+        tagRuleButtons.add(getModifyAlertTagRuleButton());
+        tagRuleButtons.add(getRemoveAlertTagRuleButton());
+        this.addTableField(3, getAlertTagRulesTable(), tagRuleButtons);
 
         this.addNumberField(
                 3,
@@ -249,5 +257,10 @@ public class ActiveScanJobDialog extends ActiveScanPolicyDialog {
     @Override
     protected List<Rule> getRules() {
         return job.getData().getPolicyDefinition().getRules();
+    }
+
+    @Override
+    protected List<PolicyDefinition.AlertTagRuleConfig> getAlertTagRules() {
+        return job.getData().getPolicyDefinition().getAlertTagRules();
     }
 }
