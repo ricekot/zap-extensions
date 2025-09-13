@@ -1,12 +1,13 @@
 // Note that new active scripts will initially be disabled
 // Right click the script in the Scripts tree and select "enable"  
 
+const Constant = Java.type("org.parosproxy.paros.Constant");
 const ScanRuleMetadata = Java.type("org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadata");
 
 function getMetadata() {
 	return ScanRuleMetadata.fromYaml(`
 id: 12345
-name: Active Vulnerability Title
+name: "${Constant.messages.getString("graaljs.template.activeDefaultTemplate.name")}"
 description: Full description
 solution: The solution
 references:
