@@ -9,3 +9,12 @@ updates:
         applies-to: version-updates
         patterns:
         - "*"
+  - package-ecosystem: "gradle"
+    directory: "/addOns/graphql"
+    schedule:
+      interval: "monthly"
+    groups:
+      gradle:
+        applies-to: version-updates
+        patterns:
+        - '*'
