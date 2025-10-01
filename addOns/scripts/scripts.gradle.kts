@@ -68,7 +68,7 @@ dependencies {
     zapAddOn("commonlib")
     zapAddOn("pscan")
 
-    implementation("net.bytebuddy:byte-buddy:1.14.13")
+    implementation(libs.byteBuddy)
 
     testImplementation(project(":testutils"))
 }

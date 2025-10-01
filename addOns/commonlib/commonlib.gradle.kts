@@ -25,16 +25,16 @@ crowdin {
 }
 
 dependencies {
-    api(platform("com.fasterxml.jackson:jackson-bom:2.19.1"))
-    api("com.fasterxml.jackson.core:jackson-databind")
-    api("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
-    api("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
-    api("com.fasterxml.jackson.datatype:jackson-datatype-jdk8")
-    api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+    api(platform(libs.jackson.bom))
+    api(libs.jackson.databind)
+    api(libs.jackson.dataformat.xml)
+    api(libs.jackson.dataformat.yaml)
+    api(libs.jackson.datatype.jdk8)
+    api(libs.jackson.datatype.jsr310)
 
-    implementation("commons-io:commons-io:2.16.1")
-    implementation("org.apache.commons:commons-csv:1.10.0")
-    implementation("org.apache.commons:commons-collections4:4.4")
+    implementation(libs.apache.commons.io)
+    implementation(libs.apache.commons.csv)
+    implementation(libs.apache.commons.collections4)
 
     testImplementation(project(":testutils"))
 }

@@ -55,7 +55,7 @@ dependencies {
         // Do not expose the newer version to dependents, exclude and change to implementation.
         exclude(group = "org.apache.commons", module = "commons-lang3")
     }
-    implementation("org.apache.commons:commons-lang3:3.18.0")
+    implementation(libs.apache.commons.lang3)
     implementation(libs.log4j.slf4j)
 
     zapAddOn("commonlib")
