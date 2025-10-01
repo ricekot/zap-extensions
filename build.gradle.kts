@@ -4,10 +4,10 @@ import org.zaproxy.gradle.spotless.ValidateImports
 plugins {
     id("com.diffplug.spotless")
     id("org.zaproxy.common") version "0.5.0" apply false
-    id("com.github.ben-manes.versions") version "0.52.0"
-    id("org.sonarqube") version "4.3.0.3225"
-    id("net.ltgt.errorprone") version "4.1.0"
-    id("io.freefair.lombok") version "8.12.2"
+    id("com.github.ben-manes.versions") version "0.53.0"
+    id("org.sonarqube") version "6.3.1.5724"
+    id("net.ltgt.errorprone") version "4.3.0"
+    id("io.freefair.lombok") version "9.0.0"
 }
 
 apply(from = "$rootDir/gradle/ci.gradle.kts")
@@ -45,12 +45,12 @@ allprojects {
 
     project.plugins.withType(JavaPlugin::class) {
         dependencies {
-            "errorprone"("com.google.errorprone:error_prone_core:2.36.0")
+            "errorprone"("com.google.errorprone:error_prone_core:2.42.0")
 
             // Include annotations used by Log4j2 Core library to avoid compiler warnings.
-            "compileOnly"("biz.aQute.bnd:biz.aQute.bnd.annotation:6.4.1")
+            "compileOnly"("biz.aQute.bnd:biz.aQute.bnd.annotation:7.1.0")
             "compileOnly"("com.google.code.findbugs:findbugs-annotations:3.0.1")
-            "testCompileOnly"("biz.aQute.bnd:biz.aQute.bnd.annotation:6.4.1")
+            "testCompileOnly"("biz.aQute.bnd:biz.aQute.bnd.annotation:7.1.0")
             "testCompileOnly"("com.google.code.findbugs:findbugs-annotations:3.0.1")
         }
 
