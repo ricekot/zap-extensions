@@ -19,7 +19,7 @@ spotless {
 }
 
 dependencies {
-    implementation("commons-codec:commons-codec:1.15")
+    implementation("commons-codec:commons-codec:1.19.0")
     implementation("io.github.bonigarcia:webdrivermanager:5.7.0") {
         exclude("com.fasterxml.jackson.core")
     }
