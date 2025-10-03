@@ -11,7 +11,7 @@ log4j = "2.24.2"
 nanohttpd = "2.3.1"
 netty = "4.1.100.Final"
 re2j = "1.7"
-slf4j = "1.7.32"
+slf4j = "2.0.17"
 
 [libraries]
 ascanrules-procyonCompilerTools = "org.bitbucket.mstrobel:procyon-compilertools:0.6.0"
