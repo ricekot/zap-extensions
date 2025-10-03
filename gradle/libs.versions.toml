@@ -34,7 +34,7 @@ commonlib-jackson-dataformat-yaml.module = "com.fasterxml.jackson.dataformat:jac
 commonlib-jackson-datatype-jdk8.module = "com.fasterxml.jackson.datatype:jackson-datatype-jdk8"
 commonlib-jackson-datatype-jsr310.module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
 database-datanucleusJdo = "org.datanucleus:datanucleus-accessplatform-jdo-rdbms:6.0.7"
-database-flywayCore = "org.flywaydb:flyway-core:9.22.3"
+database-flywayCore = "org.flywaydb:flyway-core:11.13.2"
 database-sqliteJdbc = "org.xerial:sqlite-jdbc:3.45.3.0"
 diff-diffutils = { module = "com.googlecode.java-diff-utils:diffutils", version.ref = "diffutils" }
 exim-harReader = "de.sstoehr:har-reader:3.1.4"
