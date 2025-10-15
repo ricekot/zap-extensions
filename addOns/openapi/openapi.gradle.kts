@@ -86,6 +86,9 @@ dependencies {
     implementation(libs.log4j.slf4j2)
 
     testImplementation(parent!!.childProjects.get("commonlib")!!.sourceSets.test.get().output)
+    testImplementation(parent!!.childProjects.get("graaljs")!!.sourceSets.test.get().output)
     testImplementation(libs.log4j.core)
+    testImplementation(project(":addOns:graaljs"))
+    testImplementation(project(":addOns:scripts"))
     testImplementation(project(":testutils"))
 }
