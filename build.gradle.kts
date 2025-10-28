@@ -45,7 +45,7 @@ allprojects {
 
     project.plugins.withType(JavaPlugin::class) {
         dependencies {
-            "errorprone"("com.google.errorprone:error_prone_core:2.42.0")
+            "errorprone"("com.google.errorprone:error_prone_core:2.43.0")
 
             // Include annotations used by Log4j2 Core library to avoid compiler warnings.
             "compileOnly"("biz.aQute.bnd:biz.aQute.bnd.annotation:7.1.0")
