@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 import java.nio.file.Files;
-
 import net.sf.json.JSON;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -75,12 +74,10 @@ public class WebUiServer {
         return server;
     }
 
-    /**
-     * The server is started after initialisation so that the parameters will have been loaded.
-     */
+    /** The server is started after initialisation so that the parameters will have been loaded. */
     public void start() {
         try {
-            getServer().start("0.0.0.0", 1337);
+            getServer().start("0.0.0.0", 1338);
         } catch (Exception e) {
             LOGGER.warn("An error occurred while starting the server.", e);
         }
@@ -98,7 +95,8 @@ public class WebUiServer {
         }
     }
 
-    public static String getDefaultResponseHeader(String contentType, int contentLength, boolean addCacheHeader) {
+    public static String getDefaultResponseHeader(
+            String contentType, int contentLength, boolean addCacheHeader) {
         return getDefaultResponseHeader(STATUS_OK, contentType, contentLength, addCacheHeader);
     }
 
@@ -142,7 +140,10 @@ public class WebUiServer {
             msg.setResponseBody(body);
             msg.setResponseHeader(
                     getDefaultResponseHeader(
-                            responseStatus, "application/json", msg.getResponseBody().length(), false));
+                            responseStatus,
+                            "application/json",
+                            msg.getResponseBody().length(),
+                            false));
         } catch (HttpMalformedHeaderException e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -268,7 +269,9 @@ public class WebUiServer {
                 msg.setResponseBody(Files.readAllBytes(file.toPath()));
                 msg.setResponseHeader(
                         WebUiServer.getDefaultResponseHeader(
-                                getResponseContentType(path), msg.getResponseBody().length(), true));
+                                getResponseContentType(path),
+                                msg.getResponseBody().length(),
+                                true));
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
             }

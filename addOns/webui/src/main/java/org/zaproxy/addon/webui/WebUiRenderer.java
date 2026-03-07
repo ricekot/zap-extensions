@@ -20,13 +20,11 @@
 package org.zaproxy.addon.webui;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
-
 import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -63,7 +61,8 @@ public class WebUiRenderer {
             String result = templateEngine.process(path, getContextForMessage(msg));
             msg.setResponseBody(result);
             msg.setResponseHeader(
-                    WebUiServer.getDefaultResponseHeader("text/html", result.length(), shouldCacheResponse(msg)));
+                    WebUiServer.getDefaultResponseHeader(
+                            "text/html", result.length(), shouldCacheResponse(msg)));
         } catch (Exception e) {
             LOGGER.error("An error occurred while rendering the response: {}", e.getMessage(), e);
         }
@@ -72,7 +71,7 @@ public class WebUiRenderer {
     private boolean shouldCacheResponse(HttpMessage msg) {
         URI uri = msg.getRequestHeader().getURI();
         String path = uri.getEscapedPath();
-        switch(path) {
+        switch (path) {
             case "/render/workbench/requestResponseViewer":
             case "/render/sidebar/scriptsList":
                 return true;
@@ -91,51 +90,64 @@ public class WebUiRenderer {
         var session = Model.getSingleton().getSession();
         try {
             switch (path) {
-                case "/render/sidebar/sitesTree": {
-                    var sitesTree = session.getSiteTree();
-                    return new Context(Locale.getDefault(), Map.of("tree", sitesTree));
-                }
-                case "/render/workbench/requestResponseViewer": {
-                    var queryParams = session.getUrlParameters(uri);
-                    for (var param : queryParams) {
-                        if (param.getName().equals("hrefId")) {
-                            int hrefId = Integer.parseInt(param.getValue());
-                            var foundMsg =
-                                    session.getSiteTree()
-                                            .getSiteNode(hrefId)
-                                            .getHistoryReference()
-                                            .getHttpMessage();
-                            return new Context(Locale.getDefault(), Map.of("msg", foundMsg));
-                        }
+                case "/render/sidebar/sitesTree":
+                    {
+                        var sitesTree = session.getSiteTree();
+                        return new Context(Locale.getDefault(), Map.of("tree", sitesTree));
                     }
-                }
-                case "/render/sidebar/scriptsList": {
-                    var extScript = Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
-                    var scriptTypes = extScript.getScriptTypes();
-                    Map<String, List<String>> scriptsMap = new TreeMap<>();
-                    for (ScriptType type : scriptTypes) {
-                        List<String> scriptNames = extScript.getScripts(type).stream().map(ScriptWrapper::getName).collect(Collectors.toList());
-                        scriptsMap.put(type.getName(), scriptNames);
-                    }
-                    return new Context(Locale.getDefault(), Map.of("scriptsMap", scriptsMap));
-                }
-                case "/render/view/scriptContent":
-                case "/render/workbench/scriptEditor": {
-                    var queryParams = session.getUrlParameters(uri);
-                    var extScript = Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
-                    for (var param : queryParams) {
-                        if (param.getName().equals("scriptName")) {
-                            String scriptName = param.getValue();
-                            ScriptWrapper script = extScript.getScript(scriptName);
-                            if (script == null) {
-                                LOGGER.error("Script not found: {}", scriptName);
-                                return new Context();
+                case "/render/workbench/requestResponseViewer":
+                    {
+                        var queryParams = session.getUrlParameters(uri);
+                        for (var param : queryParams) {
+                            if (param.getName().equals("hrefId")) {
+                                int hrefId = Integer.parseInt(param.getValue());
+                                var foundMsg =
+                                        session.getSiteTree()
+                                                .getSiteNode(hrefId)
+                                                .getHistoryReference()
+                                                .getHttpMessage();
+                                return new Context(Locale.getDefault(), Map.of("msg", foundMsg));
                             }
-                            return new Context(Locale.getDefault(), Map.of("script", script));
                         }
                     }
-                }
-                // Fall through
+                case "/render/sidebar/scriptsList":
+                    {
+                        var extScript =
+                                Control.getSingleton()
+                                        .getExtensionLoader()
+                                        .getExtension(ExtensionScript.class);
+                        var scriptTypes = extScript.getScriptTypes();
+                        Map<String, List<String>> scriptsMap = new TreeMap<>();
+                        for (ScriptType type : scriptTypes) {
+                            List<String> scriptNames =
+                                    extScript.getScripts(type).stream()
+                                            .map(ScriptWrapper::getName)
+                                            .collect(Collectors.toList());
+                            scriptsMap.put(type.getName(), scriptNames);
+                        }
+                        return new Context(Locale.getDefault(), Map.of("scriptsMap", scriptsMap));
+                    }
+                case "/render/view/scriptContent":
+                case "/render/workbench/scriptEditor":
+                    {
+                        var queryParams = session.getUrlParameters(uri);
+                        var extScript =
+                                Control.getSingleton()
+                                        .getExtensionLoader()
+                                        .getExtension(ExtensionScript.class);
+                        for (var param : queryParams) {
+                            if (param.getName().equals("scriptName")) {
+                                String scriptName = param.getValue();
+                                ScriptWrapper script = extScript.getScript(scriptName);
+                                if (script == null) {
+                                    LOGGER.error("Script not found: {}", scriptName);
+                                    return new Context();
+                                }
+                                return new Context(Locale.getDefault(), Map.of("script", script));
+                            }
+                        }
+                    }
+                    // Fall through
                 default:
                     return new Context();
             }

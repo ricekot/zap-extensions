@@ -117,6 +117,7 @@ var addOns =
         "webdrivers:webdriverwindows",
         "websocket",
         "webuipoc",
+        "webui",
         "zest",
     )
 
