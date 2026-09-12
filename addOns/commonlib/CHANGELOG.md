@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Shared registration API for application UI actions, including actions without menu items or default shortcuts.
 
 ### Changed
+- Own the Keyboard options and cheatsheet API, using the shared action registry. Existing shortcut settings are preserved, and menu-less actions can also be assigned shortcuts.
+- Require ZAP 2.18.0.
 - Maintenance changes.
 
 ## [1.44.0] - 2026-08-26

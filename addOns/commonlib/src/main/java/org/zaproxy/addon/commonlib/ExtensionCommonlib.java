@@ -23,18 +23,21 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.commonlib.actions.ActionRegistry;
+import org.zaproxy.addon.commonlib.internal.keyboard.KeyboardShortcuts;
 import org.zaproxy.addon.commonlib.internal.vulns.LegacyVulnerabilities;
 import org.zaproxy.addon.commonlib.ui.GenerateFixPromptMenu;
 import org.zaproxy.addon.commonlib.ui.PopupMenuTreeTools;
 import org.zaproxy.addon.commonlib.ui.ProgressPanel;
 import org.zaproxy.addon.commonlib.ui.SitesTreeInfoMenu;
 import org.zaproxy.addon.commonlib.ui.TabbedOutputPanel;
+import org.zaproxy.zap.extension.keyboard.ExtensionKeyboard;
 import org.zaproxy.zap.utils.ThreadUtils;
 
 public class ExtensionCommonlib extends ExtensionAdaptor {
@@ -107,6 +110,7 @@ public class ExtensionCommonlib extends ExtensionAdaptor {
 
     private ProgressPanel progressPanel;
     private final ActionRegistry actionRegistry = new ActionRegistry();
+    private ExtensionKeyboard keyboardExtension;
 
     public ExtensionCommonlib() {
         LegacyVulnerabilities.load();
@@ -125,6 +129,23 @@ public class ExtensionCommonlib extends ExtensionAdaptor {
             extensionHook.getHookMenu().addPopupMenuItem(new PopupMenuTreeTools());
         }
         extensionHook.addSessionListener(new SessionChangedListenerImpl());
+    }
+
+    @Override
+    public void postInit() {
+        if (!hasView()) {
+            return;
+        }
+        ExtensionKeyboard keyboard =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionKeyboard.class);
+        if (keyboard != null) {
+            ThreadUtils.invokeAndWaitHandled(
+                    () -> {
+                        keyboard.setShortcutProvider(
+                                new KeyboardShortcuts(getModel(), getView(), actionRegistry));
+                        keyboardExtension = keyboard;
+                    });
+        }
     }
 
     /**
@@ -156,7 +177,14 @@ public class ExtensionCommonlib extends ExtensionAdaptor {
     @Override
     public void unload() {
         if (hasView()) {
-            ThreadUtils.invokeAndWaitHandled(actionRegistry::clear);
+            ThreadUtils.invokeAndWaitHandled(
+                    () -> {
+                        if (keyboardExtension != null) {
+                            keyboardExtension.setShortcutProvider(null);
+                            keyboardExtension = null;
+                        }
+                        actionRegistry.clear();
+                    });
             getView().setOutputPanel(null);
         }
         LegacyVulnerabilities.unload();

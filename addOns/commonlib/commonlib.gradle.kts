@@ -7,6 +7,7 @@ zapAddOn {
     addOnStatus.set(AddOnStatus.RELEASE)
 
     manifest {
+        zapVersion.set("2.18.0")
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/common-library/")
 
@@ -25,6 +26,8 @@ crowdin {
 }
 
 dependencies {
+    "zap"("org.zaproxy:zap:2.18.0")
+
     api(platform(libs.commonlib.jackson.bom))
     api(libs.commonlib.jackson.databind)
     api(libs.commonlib.jackson.dataformat.xml)

@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Keyboard Options</title>
+</head>
+<body>
+<h1>Keyboard Options</h1>
+<p>
+The Common Library add-on provides the Keyboard options page. It lists actions from
+ZAP's main menus, along with additional actions registered by add-ons. An action does
+not need a menu item or a default shortcut to appear here.
+</p>
+<p>
+Use the filter to find an action and select its row to edit its shortcut. Leaving the
+key blank explicitly removes the shortcut. Assigning a shortcut already used by another
+listed action clears that action's shortcut. Changes are applied when the options are saved;
+cancelling the options leaves the existing bindings unchanged.
+</p>
+<p>
+Reset restores defaults for currently registered actions when the options are saved.
+Preferences for temporarily unavailable add-ons are retained. Custom bindings take
+precedence over defaults. If multiple actions have the same default, the first registered
+action receives it. Menu-less actions use main-window shortcuts and still respect the
+normal precedence of focused Swing components' key bindings.
+</p>
+<p>
+Existing keyboard preferences are preserved. Installing or removing an add-on updates
+its registered actions without restarting ZAP; reopen the options page to refresh its list.
+The action-ordered and key-ordered HTML cheatsheets remain available when the API is enabled.
+</p>
+<p>
+If Common Library is unloaded, ZAP restores its legacy menu-only Keyboard options and
+shortcut handling. Preferences for the additional actions are retained for reinstallation.
+</p>
+</body>
+</html>
