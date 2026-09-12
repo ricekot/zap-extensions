@@ -28,12 +28,14 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Session;
+import org.zaproxy.addon.commonlib.actions.ActionRegistry;
 import org.zaproxy.addon.commonlib.internal.vulns.LegacyVulnerabilities;
 import org.zaproxy.addon.commonlib.ui.GenerateFixPromptMenu;
 import org.zaproxy.addon.commonlib.ui.PopupMenuTreeTools;
 import org.zaproxy.addon.commonlib.ui.ProgressPanel;
 import org.zaproxy.addon.commonlib.ui.SitesTreeInfoMenu;
 import org.zaproxy.addon.commonlib.ui.TabbedOutputPanel;
+import org.zaproxy.zap.utils.ThreadUtils;
 
 public class ExtensionCommonlib extends ExtensionAdaptor {
 
@@ -104,6 +106,7 @@ public class ExtensionCommonlib extends ExtensionAdaptor {
             };
 
     private ProgressPanel progressPanel;
+    private final ActionRegistry actionRegistry = new ActionRegistry();
 
     public ExtensionCommonlib() {
         LegacyVulnerabilities.load();
@@ -124,6 +127,20 @@ public class ExtensionCommonlib extends ExtensionAdaptor {
         extensionHook.addSessionListener(new SessionChangedListenerImpl());
     }
 
+    /**
+     * Gets the shared registry for application UI actions.
+     *
+     * @return the registry; its operations must be performed on the EDT.
+     * @throws IllegalStateException if ZAP is running without a GUI.
+     * @since 1.45.0
+     */
+    public ActionRegistry getActionRegistry() {
+        if (!hasView()) {
+            throw new IllegalStateException("UI actions require a GUI.");
+        }
+        return actionRegistry;
+    }
+
     public ProgressPanel getProgressPanel() {
         if (progressPanel == null) {
             progressPanel = new ProgressPanel(getView());
@@ -139,6 +156,7 @@ public class ExtensionCommonlib extends ExtensionAdaptor {
     @Override
     public void unload() {
         if (hasView()) {
+            ThreadUtils.invokeAndWaitHandled(actionRegistry::clear);
             getView().setOutputPanel(null);
         }
         LegacyVulnerabilities.unload();
